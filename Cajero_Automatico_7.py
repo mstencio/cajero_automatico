@@ -21,7 +21,15 @@
 #   el PIN incorrecto
 # Indicamos al usuario si desea seguir realizando otra transaccion
 # Verificamos la respuesta, en caso de ser SI se le mostrara las opciones disponibles
-# En caso de la respuesta ser NO se le mostrara un mensaje de despedida 
+# En caso de la respuesta ser NO se le mostrara un mensaje de despedida
+# Las opciones disponibles son: deposito, retiro, saldo, transferencia, pago de servicios y salir
+# En la opcion de deposito solicitamos el monto a depositar y lo sumamos al saldo
+# En la opciom de retiro solicitamos el monto y lo restamos al saldo, mostramos los billetes que se dispendaran dependiendo del montoa retirar
+# En la opcion de transferencia mostramos las cuentas disponibles para hacer transferencias y solicitamons que digite una y el monto a transferir
+#    restamos el monto al saldo y sumamos el saldo a la cuenta indicada
+# En la opcion de pago de servicios mostramos los servicios disponibles para pagar y solicitamos que digite una de las opciones
+#    restamos el monto o valor del servicio al saldo y actualizamos el valor del servicio a 0
+# En la opcion de salir mostramos un mensaje de despedida
 
 intentos = 3
 i = int
@@ -37,7 +45,7 @@ cliente_trans = str
 monto_trans = float
 separador = ", "
 transferencia = {"CARLOS": 0, "MARIA": 0, "JUAN": 0, "PABLO": 0, "OSCAR": 0} # opciones de nombres a quien se le pueden hacer transferecias
-pago_servicios = {"Agua": 0, "Electricidad": 0, "Telefono": 0} # opciones de pago de servicios
+pago_servicios = {"AGUA": 5850, "ELECTRICIDAD": 15300, "TELEFONO": 10000} # opciones de pago de servicios
 ser_pagar = str
 
 
@@ -147,15 +155,15 @@ for i in range(intentos):
                           #    print("> ",y)
                           print(" > ",separador.join(transferencia)," < ")
                           cliente_trans = input("A quien desea realizar la transferencia? : > ")
-                          if  cliente_trans in transferencia.keys():
+                          if  cliente_trans in transferencia.keys():  # verificamos que el nombre ingresado se encuentre registrado
                               monto_trans = int(input("Digite la cantidad a transferir: > "))
                               if saldo >= monto_trans:
                                   #saldo = saldo - monto_trans
                                   saldo -= monto_trans
-                                  print("Transaccion exitosa")
+                                  print("> Transaccion exitosa <")
                                   print("Su saldo es de: > ",saldo)
-                                  z = transferencia.get(cliente_trans) + monto_trans
-                                  transferencia.update({cliente_trans : z })
+                                  z = transferencia.get(cliente_trans) + monto_trans  # obtenemos el valor de la clave y le sumamos el monto a transferir
+                                  transferencia.update({cliente_trans : z })          # actualizamos el valor de la clave 
                                   print("Nuevo saldo de ", cliente_trans," es ",z)  # mostramos el saldo del otro cliente solo para verificar funcionamiento
                               else:
                                   print("Saldo insuficiente para realizar la transferencia")
@@ -164,9 +172,24 @@ for i in range(intentos):
 
                        if opciones == 5:
                           print("Pago de servicios")
+                          print("Sus servicios afiliados son:")
                           print(" > ",separador.join(pago_servicios)," < ")
-                          serv_pagar = str(input("Cual servicio desea pagar:"))
-                          
+                          serv_pagar = str(input("Cual servicio desea pagar: > "))
+                          if serv_pagar in pago_servicios:
+                              s = pago_servicios.get(serv_pagar)      # obtenemos el valor de la clave
+                              if s > 0:
+                                  if saldo >= s:
+                                      saldo -= s
+                                      s = 0
+                                      pago_servicios.update({serv_pagar : s })  # actualizamos el valor de la clave
+                                      print("> Transaccion exitosa <")
+                                      print("Su saldo es de: > ",saldo)
+                                  else:
+                                      print("Saldo insuficiente")
+                              else:
+                                   print("El servicio no tiene pendientes de pago")
+                          else:
+                               print("Servicio no afiliado")
                        if opciones != 6:
                            SoN = input("Desea realizar otra transaccion: S/N > ")         
                     
